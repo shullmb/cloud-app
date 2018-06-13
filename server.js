@@ -2,6 +2,9 @@ var express = require('express');
 require('dotenv').config();
 var path = require('path');
 var ejsLayouts = require('express-ejs-layouts');
+var multer = require('multer');
+var upload = multer({dest: './uploads/'});
+var cloud = require('cloudinary');
 var app = express();
 var port = process.env.PORT || 2000;
 
@@ -14,13 +17,16 @@ app.get('/', function(req,res) {
 })
 
 app.get('/upload', function(req,res) {
-    console.log('upload get hit');
+    console.log('upload GET hit');
     res.render('upload');
 })
 
-app.post('/upload', function(req,res) {
-    console.log('upload post hit');
-    res.send('uploaded');
+app.post('/upload', upload.single('myFile'), function(req,res) {
+    console.log('upload POST hit');
+    cloud.uploader.upload(req.file.path, function(result) {
+        console.log(result);
+    })
+    res.redirect('/');
 })
 
 
