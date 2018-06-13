@@ -11,9 +11,11 @@ var port = process.env.PORT || 2000;
 app.set('view engine', 'ejs');
 app.use(ejsLayouts);
 
+var images = [];
+
 app.get('/', function(req,res) {
     console.log('get route hit');
-    res.render('index');
+    res.render('index', {arr: images, cloud});
 })
 
 app.get('/upload', function(req,res) {
@@ -24,9 +26,9 @@ app.get('/upload', function(req,res) {
 app.post('/upload', upload.single('myFile'), function(req,res) {
     console.log('upload POST hit');
     cloud.uploader.upload(req.file.path, function(result) {
-        console.log(result);
+        images.push(result.public_id);
+        res.redirect('/');
     })
-    res.redirect('/');
 })
 
 
